@@ -31,21 +31,51 @@ from os.path import expanduser
 from os import path
 
 class Differ:
-    def __init__(self, extract_file_name_1, extract_file_name_2, account_1_tag, account_2_tag, output_directory):
+    def __init__(self, extract_file_name_1, extract_file_name_2, extract_file_name_3, extract_file_name_4, extract_file_name_5, account_1_tag, account_2_tag, account_3_tag, account_4_tag, account_5_tag, output_directory):
 
         self.output_directory=output_directory
         self.logger = logging.getLogger(__name__)
         self.extract_file_name_1 = extract_file_name_1
         self.extract_file_name_2 = extract_file_name_2
+        self.extract_file_name_3 = extract_file_name_3
+        self.extract_file_name_4 = extract_file_name_4
+        self.extract_file_name_5 = extract_file_name_5
         self.extract_file_handler_1 = None
         self.extract_file_handler_2 = None
+        self.extract_file_handler_3 = None
+        self.extract_file_handler_4 = None
+        self.extract_file_handler_5 = None
         self.account_1_tag = account_1_tag
         self.account_2_tag = account_2_tag
+        self.account_3_tag = account_3_tag
+        self.account_4_tag = account_4_tag
+        self.account_5_tag = account_5_tag
         self.account_1_raw = None
         self.account_2_raw = None
+        self.account_3_raw = None
+        self.account_4_raw = None
+        self.account_5_raw = None
         self.equivalency_list_dict = None
         self.account_1_to_account_2_csv_out = None
+        self.account_1_to_account_3_csv_out = None
+        self.account_1_to_account_4_csv_out = None
+        self.account_1_to_account_5_csv_out = None
         self.account_2_to_account_1_csv_out = None
+        self.account_2_to_account_3_csv_out = None
+        self.account_2_to_account_4_csv_out = None
+        self.account_2_to_account_5_csv_out = None
+        self.account_3_to_account_1_csv_out = None
+        self.account_3_to_account_2_csv_out = None
+        self.account_3_to_account_4_csv_out = None
+        self.account_3_to_account_5_csv_out = None
+        self.account_4_to_account_1_csv_out = None
+        self.account_4_to_account_2_csv_out = None
+        self.account_4_to_account_3_csv_out = None
+        self.account_4_to_account_5_csv_out = None
+        self.account_5_to_account_1_csv_out = None
+        self.account_5_to_account_2_csv_out = None
+        self.account_5_to_account_3_csv_out = None
+        self.account_5_to_account_4_csv_out = None
         self.read_equivalency_dict()
         self.read_extract_files()
 
@@ -64,6 +94,22 @@ class Differ:
             self.extract_file_handler_2 = f
             next(csv.reader(f))
             self.account_2_raw = [tuple(line) for line in csv.reader(f)]
+        
+        with open(self.extract_file_name_3) as f:
+            self.extract_file_handler_3 = f
+            next(csv.reader(f))
+            self.account_3_raw = [tuple(line) for line in csv.reader(f)]
+
+        with open(self.extract_file_name_4) as f:
+            self.extract_file_handler_4 = f
+            next(csv.reader(f))
+            self.account_4_raw = [tuple(line) for line in csv.reader(f)]
+
+        with open(self.extract_file_name_5) as f:
+            self.extract_file_handler_5 = f
+            next(csv.reader(f))
+            self.account_5_raw = [tuple(line) for line in csv.reader(f)]
+
 
     # Get values after matching equivalency list
     def sanitize_value_with_equivalency(self, value):
@@ -102,6 +148,9 @@ class Differ:
 
         sanitized_account_1_list = self.get_sanitized_list_with_equivalency(self.account_1_raw, self.account_1_tag)
         sanitized_account_2_list = self.get_sanitized_list_with_equivalency(self.account_2_raw, self.account_2_tag)
+        sanitized_account_3_list = self.get_sanitized_list_with_equivalency(self.account_3_raw, self.account_3_tag)
+        sanitized_account_4_list = self.get_sanitized_list_with_equivalency(self.account_4_raw, self.account_4_tag)
+        sanitized_account_5_list = self.get_sanitized_list_with_equivalency(self.account_5_raw, self.account_5_tag)
         
         print(Style.BRIGHT)
         print(Fore.BLUE + "Summary report in text format:")
@@ -109,13 +158,19 @@ class Differ:
 
         print("Number of items in %s: %d" %(self.account_1_tag, len(self.account_1_raw)))
         print("Number of items in %s: %d" %(self.account_2_tag, len(self.account_2_raw)))
+        print("Number of items in %s: %d" %(self.account_3_tag, len(self.account_3_raw)))
+        print("Number of items in %s: %d" %(self.account_4_tag, len(self.account_4_raw)))
+        print("Number of items in %s: %d" %(self.account_5_tag, len(self.account_5_raw)))
         
-        summary.append(['Harvested Items', len(self.account_1_raw), len(self.account_2_raw)])
+        summary.append(['Harvested Items', len(self.account_1_raw), len(self.account_2_raw), len(self.account_3_raw), len(self.account_4_raw), len(self.account_5_raw)])
         
         print("Number of items in %s after sanitizing: %d" % (self.account_1_tag, len(sanitized_account_1_list)))
         print("Number of items in %s after sanitizing: %d" % (self.account_2_tag, len(sanitized_account_2_list)))
+        print("Number of items in %s after sanitizing: %d" % (self.account_3_tag, len(sanitized_account_3_list)))
+        print("Number of items in %s after sanitizing: %d" % (self.account_4_tag, len(sanitized_account_4_list)))
+        print("Number of items in %s after sanitizing: %d" % (self.account_5_tag, len(sanitized_account_5_list)))
 
-        summary.append(['Sanitized Items', len(sanitized_account_1_list), len(sanitized_account_2_list)])
+        summary.append(['Sanitized Items', len(sanitized_account_1_list), len(sanitized_account_2_list), len(sanitized_account_3_list), len(sanitized_account_4_list), len(sanitized_account_5_list)])
 
         account_1_roles = set([(item[0], item[1]) for item in sanitized_account_1_list])
         print("Number of roles in %s: %d" %(self.account_1_tag, len(account_1_roles)))
@@ -153,13 +208,67 @@ class Differ:
         filename = self.account_2_tag + "_non_service_linked_roles.csv"
         self.write_to_csv(account_2_non_service_linked_roles, headerrow, filename)
 
-        summary.append(['Roles',len(account_1_roles), len(account_2_roles)])
-        summary.append(['Service Linked Roles', len(account_1_service_linked_roles), len(account_2_service_linked_roles)])
-        summary.append(['Non-Service Linked Roles', len(account_1_non_service_linked_roles), len(account_2_non_service_linked_roles)])
+        account_3_roles = set([(item[0], item[1]) for item in sanitized_account_3_list])
+        print("Number of roles in %s: %d" %(self.account_3_tag, len(account_3_roles)))
+        headerrow =('rolename', 'path')
+        filename = self.account_3_tag + "_roles.csv"
+        self.write_to_csv(account_3_roles, headerrow, filename)
 
-        # Getting list of common roles between 2 accounts using bitwise operator.
+        account_3_service_linked_roles = set([(item[0],) for item in sanitized_account_3_list if (item[1].startswith('/aws-service-role/'))])
+        print("Number of service linked roles in %s: %d" %(self.account_3_tag, len(account_3_service_linked_roles)))
+        headerrow =('rolename',)
+        filename = self.account_3_tag + "_service_linked_roles.csv"
+        self.write_to_csv(account_3_service_linked_roles, headerrow, filename)
+
+        account_3_non_service_linked_roles = set([(item[0],) for item in sanitized_account_3_list if not item[1].startswith('/aws-service-role/')])
+        print("Number of Non-service linked roles in %s: %d" %(self.account_3_tag, len(account_3_non_service_linked_roles)))
+        headerrow =('rolename',)
+        filename = self.account_3_tag + "_non_service_linked_roles.csv"
+        self.write_to_csv(account_3_non_service_linked_roles, headerrow, filename)
+
+        account_4_roles = set([(item[0], item[1]) for item in sanitized_account_4_list])
+        print("Number of roles in %s: %d" %(self.account_4_tag, len(account_4_roles)))
+        headerrow =('rolename', 'path')
+        filename = self.account_4_tag + "_roles.csv"
+        self.write_to_csv(account_4_roles, headerrow, filename)
+
+        account_4_service_linked_roles = set([(item[0],) for item in sanitized_account_4_list if (item[1].startswith('/aws-service-role/'))])
+        print("Number of service linked roles in %s: %d" %(self.account_4_tag, len(account_4_service_linked_roles)))
+        headerrow =('rolename',)
+        filename = self.account_4_tag + "_service_linked_roles.csv"
+        self.write_to_csv(account_4_service_linked_roles, headerrow, filename)
+
+        account_4_non_service_linked_roles = set([(item[0],) for item in sanitized_account_4_list if not item[1].startswith('/aws-service-role/')])
+        print("Number of Non-service linked roles in %s: %d" %(self.account_4_tag, len(account_4_non_service_linked_roles)))
+        headerrow =('rolename',)
+        filename = self.account_4_tag + "_non_service_linked_roles.csv"
+        self.write_to_csv(account_4_non_service_linked_roles, headerrow, filename)
+
+        account_5_roles = set([(item[0], item[1]) for item in sanitized_account_5_list])
+        print("Number of roles in %s: %d" %(self.account_5_tag, len(account_5_roles)))
+        headerrow =('rolename', 'path')
+        filename = self.account_5_tag + "_roles.csv"
+        self.write_to_csv(account_5_roles, headerrow, filename)
+
+        account_5_service_linked_roles = set([(item[0],) for item in sanitized_account_5_list if (item[1].startswith('/aws-service-role/'))])
+        print("Number of service linked roles in %s: %d" %(self.account_5_tag, len(account_5_service_linked_roles)))
+        headerrow =('rolename',)
+        filename = self.account_5_tag + "_service_linked_roles.csv"
+        self.write_to_csv(account_5_service_linked_roles, headerrow, filename)
+
+        account_5_non_service_linked_roles = set([(item[0],) for item in sanitized_account_5_list if not item[1].startswith('/aws-service-role/')])
+        print("Number of Non-service linked roles in %s: %d" %(self.account_5_tag, len(account_5_non_service_linked_roles)))
+        headerrow =('rolename',)
+        filename = self.account_5_tag + "_non_service_linked_roles.csv"
+        self.write_to_csv(account_5_non_service_linked_roles, headerrow, filename)
+
+        summary.append(['Roles',len(account_1_roles), len(account_2_roles), len(account_3_roles), len(account_4_roles), len(account_5_roles)])
+        summary.append(['Service Linked Roles', len(account_1_service_linked_roles), len(account_2_service_linked_roles), len(account_3_service_linked_roles), len(account_4_service_linked_roles), len(account_5_service_linked_roles)])
+        summary.append(['Non-Service Linked Roles', len(account_1_non_service_linked_roles), len(account_2_non_service_linked_roles), len(account_3_non_service_linked_roles), len(account_4_non_service_linked_roles), len(account_5_non_service_linked_roles)])
+
+        # Getting list of common roles between 5 accounts using bitwise operator.
         # If roles are common will return a 1.
-        common_role_list = set(account_1_roles) & set(account_2_roles)
+        common_role_list = set(account_1_roles) & set(account_2_roles) & set(account_3_roles) & set(account_4_roles) & set(account_5_roles)
         print("Number of common roles: %d" %( len(common_role_list)))
         headerrow =('rolename', 'path')
         filename = "common_roles.csv"
@@ -182,7 +291,7 @@ class Differ:
         summary.append(['Common Non-Service Linked Roles', len(common_non_service_linked_role_list), len(common_non_service_linked_role_list)])
 
         # Get roles that are in first but not in second.
-        account_1_diff_account_2 = set(account_1_roles) - set(account_2_roles) 
+        account_1_diff_account_2 = set(account_1_roles) - set(account_2_roles) - set(account_3_roles) - set(account_4_roles) - set(account_5_roles)
 
 
         #difference in items will not translate to roles, for e.g. you could have a role in account-a that has action item that is not in account-b
